@@ -1,0 +1,75 @@
+# prompt:  Scenario: You work as a data scientist for an e-commerce company that sells a wide range of 
+# products online. The company collects vast amounts of data about its customers, including their 
+# purchase history, browsing behavior, demographics, and more. The marketing team wants to 
+# understand their customer base better and improve their targeted marketing strategies. They have 
+# asked you to perform customer segmentation using clustering techniques to identify distinct groups 
+# of customers with similar characteristics. 
+# Question: Your task is to use Python and clustering algorithms to segment the customers into 
+# different groups based on their behavior and characteristics. The marketing team will use these 
+# segments to tailor their marketing campaigns and promotions effectively.
+
+# Import necessary libraries
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# Create a sample dataset of customer data (replace with your actual data)
+# Features could include:
+# - Purchase frequency
+# - Average purchase value
+# - Time since last purchase
+# - Product categories purchased
+# - Demographic information (age, gender, location - potentially encoded)
+
+# For demonstration, let's create a simple DataFrame
+data = {'CustomerID': range(1, 21),
+        'Annual Income (k$)': [15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24],
+        'Spending Score (1-100)': [39, 81, 6, 77, 40, 76, 6, 94, 3, 72, 35, 73, 5, 60, 35, 79, 5, 83, 8, 97]}
+customer_df = pd.DataFrame(data)
+
+# Select features for clustering
+# In a real-world scenario, you would select relevant features based on your understanding of the business and data.
+X_clustering = customer_df[['Annual Income (k$)', 'Spending Score (1-100)']]
+
+# Scale the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_clustering)
+
+# Determine the optimal number of clusters using the Elbow method
+inertia = []
+for n in range(1, 11):
+  kmeans = KMeans(n_clusters=n, random_state=42, n_init=10)
+  kmeans.fit(X_scaled)
+  inertia.append(kmeans.inertia_)
+
+plt.figure(figsize=(8, 4))
+plt.plot(range(1, 11), inertia, marker='o')
+plt.title('Elbow Method for Optimal Number of Clusters')
+plt.xlabel('Number of Clusters')
+plt.ylabel('Inertia')
+plt.show()
+
+# Based on the Elbow method (or other methods like Silhouette score), choose an optimal number of clusters.
+# Let's assume the Elbow method suggests 5 clusters for this example.
+optimal_clusters = 5
+
+# Train the K-Means model with the optimal number of clusters
+kmeans = KMeans(n_clusters=optimal_clusters, random_state=42, n_init=10)
+kmeans.fit(X_scaled)
+
+# Add the cluster labels to the original DataFrame
+customer_df['Cluster'] = kmeans.labels_
+
+# Analyze the characteristics of each cluster
+print("Customer Segmentation Results:")
+print(customer_df.groupby('Cluster').mean())
+
+# Visualize the clusters (for 2 features)
+plt.figure(figsize=(8, 6))
+plt.scatter(customer_df['Annual Income (k$)'], customer_df['Spending Score (1-100)'], c=customer_df['Cluster'], cmap='viridis')
+plt.title('Customer Segments based on Income and Spending Score')
+plt.xlabel('Annual Income (k$)')
+plt.ylabel('Spending Score (1-100)')
+plt.colorbar(label='Cluster')
+plt.show()
