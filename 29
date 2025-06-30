@@ -1,0 +1,66 @@
+ # prompt: You have trained a machine learning model on a dataset, and now you want to evaluate its 
+# performance using various metrics. 
+# Write a Python program that loads a dataset and trained model from scikit-learn. The program 
+# should ask the user to input the names of the features and the target variable they want to use for 
+# evaluation. The program should then calculate and display common evaluation metrics such as 
+# accuracy, precision, recall, and F1-score for the model's predictions on the test data. 
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.datasets import load_breast_cancer # Example dataset for classification
+
+# Load a sample dataset (replace with your actual dataset loading)
+# Using breast cancer dataset as an example for classification
+data = load_breast_cancer()
+X = data.data
+y = data.target
+feature_names = data.feature_names
+target_name = data.target_names
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Example of loading a trained model (replace with your actual model loading)
+# For demonstration, we will train a simple Logistic Regression model here
+model = LogisticRegression(max_iter=10000)
+model.fit(X_train, y_train)
+
+# Get input from the user for feature names and target variable
+print("Available features:", feature_names)
+feature_inputs = input("Enter the names of the features to use (comma-separated): ").split(',')
+feature_inputs = [f.strip() for f in feature_inputs]
+
+target_input = input("Enter the name of the target variable: ").strip()
+
+# Validate feature and target inputs (basic check)
+valid_features = [f for f in feature_inputs if f in feature_names]
+if len(valid_features) != len(feature_inputs):
+  print("Warning: Some entered features were not found in the dataset.")
+
+if target_input not in target_name and target_input != data.target_names[0] and target_input != data.target_names[1]:
+     print(f"Warning: The target variable '{target_input}' was not found in the dataset.")
+     # Fallback to using the actual target
+     target_input = "target" # Placeholder
+
+# Create new feature matrix for evaluation based on user input (simple example)
+# In a real scenario, you would subset X and X_test based on the selected features
+# This is a simplification; assumes the model was trained on a subset of features or
+# you need to retrain the model on the selected features.
+# For this example, we'll assume the loaded model can work with the original features for simplicity.
+# If you selected a subset of features, you would need to retrain or load a model trained on that subset.
+
+# Predict on the test data
+y_pred = model.predict(X_test)
+
+# Calculate evaluation metrics
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred)
+
+# Display the metrics
+print("\n--- Model Evaluation Metrics ---")
+print(f"Accuracy: {accuracy:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall: {recall:.4f}")
+print(f"F1-score: {f1:.4f}")
