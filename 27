@@ -1,0 +1,53 @@
+# prompt: You are working for a telecommunications company, and you want to predict whether a customer 
+# will churn (leave the company) based on their usage patterns and demographic data. You have 
+# collected a dataset of past customers with their churn status (0 for not churned, 1 for churned) and 
+# various features. 
+# Write a Python program that allows the user to input the features (e.g., usage minutes, contract 
+# duration) of a new customer. The program should use logistic regression from scikit-learn to predict 
+# whether the new customer will churn or not based on the input features. 
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+# Sample customer churn dataset (replace with your actual data)
+# Features: usage_minutes, contract_duration (months), monthly_charges ($), customer_service_calls
+# Label: churn (0: No, 1: Yes)
+X_churn = np.array([
+    [250, 12, 50, 1],
+    [300, 24, 60, 0],
+    [150, 6, 30, 2],
+    [400, 36, 80, 0],
+    [100, 3, 20, 3],
+    [280, 18, 55, 1],
+    [350, 30, 70, 0],
+    [180, 9, 40, 2],
+    [450, 48, 90, 0],
+    [120, 1, 25, 4]
+])
+y_churn = np.array([0, 0, 1, 0, 1, 0, 0, 1, 0, 1])
+
+# Split data into training and testing sets
+X_train_churn, X_test_churn, y_train_churn, y_test_churn = train_test_split(X_churn, y_churn, test_size=0.2, random_state=42)
+
+# Create and train the Logistic Regression model
+churn_model = LogisticRegression()
+churn_model.fit(X_train_churn, y_train_churn)
+
+# Get input features for a new customer from the user
+usage_minutes = float(input("Enter usage minutes: "))
+contract_duration = int(input("Enter contract duration (months): "))
+monthly_charges = float(input("Enter monthly charges ($): "))
+customer_service_calls = int(input("Enter number of customer service calls: "))
+
+# Create a numpy array for the new customer's features
+new_customer_features = np.array([[usage_minutes, contract_duration, monthly_charges, customer_service_calls]])
+
+# Predict whether the new customer will churn
+prediction_churn = churn_model.predict(new_customer_features)
+
+# Print the prediction
+if prediction_churn[0] == 1:
+    print("Based on the input features, the customer is predicted to Churn.")
+else:
+    print("Based on the input features, the customer is predicted NOT to Churn.")
