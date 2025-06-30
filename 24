@@ -1,0 +1,43 @@
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+# Create a sample dataset (replace with your actual data)
+# Features: symptom 1, symptom 2, symptom 3
+# Labels: 0 (no condition), 1 (condition)
+X = np.array([[1, 5, 2],
+              [2, 6, 3],
+              [3, 7, 4],
+              [4, 8, 5],
+              [5, 1, 6],
+              [6, 2, 7],
+              [7, 3, 8],
+              [8, 4, 9]])
+y = np.array([0, 0, 0, 0, 1, 1, 1, 1])
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Get input features from the user
+symptom1 = float(input("Enter the value for symptom 1: "))
+symptom2 = float(input("Enter the value for symptom 2: "))
+symptom3 = float(input("Enter the value for symptom 3: "))
+
+# Get the value of k from the user
+k_neighbors = int(input("Enter the value for k (number of neighbors): "))
+
+# Create a new patient's features
+new_patient_features = np.array([[symptom1, symptom2, symptom3]])
+
+# Create and train the KNN classifier
+knn = KNeighborsClassifier(n_neighbors=k_neighbors)
+knn.fit(X_train, y_train)
+
+# Predict the medical condition for the new patient
+prediction = knn.predict(new_patient_features)
+
+# Print the prediction
+if prediction[0] == 1:
+  print("Based on the input features and k={}, the patient is predicted to have the medical condition.".format(k_neighbors))
+else:
+  print("Based on the input features and k={}, the patient is predicted to NOT have the medical condition.".format(k_neighbors))
