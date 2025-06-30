@@ -1,0 +1,61 @@
+# prompt: Scenario: You work as a data scientist for a real estate company. The company has collected 
+# data on various houses, including features such as the size of the house, number of bedrooms, 
+# location, and other relevant attributes. The marketing team wants to build a predictive model to 
+# estimate the price of houses based on their features. They believe that linear regression modeling 
+# can be an effective approach for this task. 
+# Question:Your task is write a Python program to perform bivariate analysis and build a linear 
+# regression model to predict house prices based on a selected feature (e.g., house size) from the 
+# dataset. Additionally, you need to evaluate the model's performance to ensure its accuracy and 
+# reliability.
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Create a sample DataFrame for housing data (replace with loading your actual data)
+data = {'House_Size': [1500, 2000, 1200, 1800, 2500, 1000, 1600, 1900, 1350, 2200],
+        'Price': [300, 450, 250, 400, 550, 200, 330, 420, 280, 490]}
+df = pd.DataFrame(data)
+
+# Bivariate analysis: Relationship between House_Size and Price
+plt.scatter(df['House_Size'], df['Price'])
+plt.xlabel('House Size (sq ft)')
+plt.ylabel('Price (in thousands of $)')
+plt.title('House Size vs. Price')
+plt.show()
+
+# Prepare data for linear regression
+X = df[['House_Size']]  # Feature
+y = df['Price']         # Target
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Build and train the Linear Regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model's performance
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"Mean Squared Error: {mse:.2f}")
+print(f"R-squared: {r2:.2f}")
+
+# Visualize the linear regression line on the test data
+plt.scatter(X_test, y_test, color='black')
+plt.plot(X_test, y_pred, color='blue', linewidth=3)
+plt.xlabel('House Size (sq ft)')
+plt.ylabel('Price (in thousands of $)')
+plt.title('Linear Regression: House Size vs. Price (Test Set)')
+plt.show()
+
+# Example of predicting price for a new house size
+new_house_size = [[1700]] # Example new house size
+predicted_price = model.predict(new_house_size)
+print(f"Predicted price for a house of 1700 sq ft: ${predicted_price[0]:.2f} thousand")
