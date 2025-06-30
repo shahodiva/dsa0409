@@ -1,0 +1,65 @@
+# prompt: You are working for a car dealership, and you want to predict the price of used cars based on 
+# various features such as the car's mileage, age, brand, and engine type. You have collected a dataset 
+# of used cars with their respective prices. 
+# Write a Python program that loads the car dataset and allows the user to input the features of a new 
+# car they want to sell. The program should use the Classification and Regression Trees (CART) 
+# algorithm from scikit-learn to predict the price of the new car based on the input features. 
+# The CART algorithm will create a tree-based model that will split the data into subsets based on the 
+# chosen features and their values, leading to a decision path that eventually predicts the price of the 
+# car. The program should output the predicted price and display the decision path (the sequence of 
+# conditions leading to the prediction) for the new car.
+
+import numpy as np
+from sklearn.tree import DecisionTreeRegressor, export_text
+
+# Create a sample car dataset (replace with your actual data)
+# Features: Mileage (in thousands), Age (years), Brand (encoded: 0 for Brand A, 1 for Brand B, etc.), Engine Type (encoded: 0 for Gas, 1 for Electric)
+# Price (in thousands of dollars)
+car_features = np.array([
+    [50, 5, 0, 0],  # Car 1: 50k miles, 5 years old, Brand A, Gas
+    [20, 2, 1, 0],  # Car 2: 20k miles, 2 years old, Brand B, Gas
+    [100, 10, 0, 0], # Car 3: 100k miles, 10 years old, Brand A, Gas
+    [30, 3, 1, 1],  # Car 4: 30k miles, 3 years old, Brand B, Electric
+    [80, 7, 0, 0],  # Car 5: 80k miles, 7 years old, Brand A, Gas
+    [10, 1, 1, 1],  # Car 6: 10k miles, 1 year old, Brand B, Electric
+    [60, 6, 0, 0],  # Car 7: 60k miles, 6 years old, Brand A, Gas
+    [40, 4, 1, 0],  # Car 8: 40k miles, 4 years old, Brand B, Gas
+    [120, 12, 0, 0],# Car 9: 120k miles, 12 years old, Brand A, Gas
+    [15, 2, 1, 1],  # Car 10: 15k miles, 2 years old, Brand B, Electric
+])
+car_prices = np.array([
+    15,  # Price in thousands for Car 1
+    25,  # Price in thousands for Car 2
+    8,   # Price in thousands for Car 3
+    35,  # Price in thousands for Car 4
+    12,  # Price in thousands for Car 5
+    40,  # Price in thousands for Car 6
+    10,  # Price in thousands for Car 7
+    20,  # Price in thousands for Car 8
+    5,   # Price in thousands for Car 9
+    38,  # Price in thousands for Car 10
+])
+
+# Create and train the CART Regression model
+cart_regressor = DecisionTreeRegressor(random_state=42)
+cart_regressor.fit(car_features, car_prices)
+
+# Get input features for the new car from the user
+mileage = float(input("Enter car mileage (in thousands): "))
+age = float(input("Enter car age (in years): "))
+brand = int(input("Enter car brand (0 for Brand A, 1 for Brand B, etc.): "))
+engine_type = int(input("Enter engine type (0 for Gas, 1 for Electric): "))
+
+# Create a numpy array for the new car's features
+new_car_features = np.array([[mileage, age, brand, engine_type]])
+
+# Predict the price of the new car
+predicted_price_car = cart_regressor.predict(new_car_features)
+
+print(f"\nThe predicted price for this car is: ${predicted_price_car[0]:.2f} thousand")
+
+# Display the decision path
+feature_names = ['Mileage', 'Age', 'Brand', 'Engine Type']
+tree_rules = export_text(cart_regressor, feature_names=feature_names)
+print("\nDecision Path:")
+tree_rules
