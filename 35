@@ -1,0 +1,68 @@
+# prompt:  Scenario: You work as a data scientist for a retail company that operates multiple stores. The 
+# company is interested in segmenting its customers based on their purchasing behavior to better 
+# understand their preferences and tailor marketing strategies accordingly. To achieve this, your team 
+# has collected transaction data from different stores, which includes customer IDs, the total amount 
+# spent in each transaction, and the frequency of visits. 
+# Question: Your task is to build a clustering model using the K-Means algorithm to group 
+# customers into distinct segments based on their spending patterns. 
+
+import matplotlib.pyplot as plt
+# Scenario: You work as a data scientist for a retail company that operates multiple stores. The
+# company is interested in segmenting its customers based on their purchasing behavior to better
+# understand their preferences and tailor marketing strategies accordingly. To achieve this, your team
+# has collected transaction data from different stores, which includes customer IDs, the total amount
+# spent in each transaction, and the frequency of visits.
+# Question: Your task is to build a clustering model using the K-Means algorithm to group
+# customers into distinct segments based on their spending patterns.
+
+import pandas as pd
+
+# Create a sample DataFrame for customer transaction data (replace with your actual data loading)
+data = {
+    'CustomerID': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+                   11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+    'TotalAmountSpent': [150, 200, 50, 300, 80, 220, 120, 400, 60, 280,
+                         500, 90, 350, 180, 450, 100, 270, 320, 70, 380],
+    'FrequencyOfVisits': [3, 5, 1, 7, 2, 6, 3, 8, 2, 5,
+                          9, 2, 7, 4, 8, 3, 6, 7, 2, 8]
+}
+customer_df = pd.DataFrame(data)
+
+# Select the features for clustering (TotalAmountSpent and FrequencyOfVisits)
+X_clustering = customer_df[['TotalAmountSpent', 'FrequencyOfVisits']]
+
+# Determine the optimal number of clusters (e.g., using the Elbow method or silhouette score)
+# For this example, we'll assume we know there are 4 segments based on business understanding
+n_clusters = 4
+
+# Initialize and train the K-Means model
+kmeans_model = KMeans(n_clusters=n_clusters, random_state=42, n_init=10) # Set n_init explicitly
+kmeans_model.fit(X_clustering)
+
+# Add the cluster labels to the DataFrame
+customer_df['Cluster'] = kmeans_model.labels_
+
+# Print the customer segments
+print("Customer Segments:")
+print(customer_df)
+
+# You can further analyze the characteristics of each cluster
+# For example, calculate the mean of the features for each cluster
+print("\nCharacteristics of Each Cluster:")
+print(customer_df.groupby('Cluster')[['TotalAmountSpent', 'FrequencyOfVisits']].mean())
+
+# You can also visualize the clusters
+plt.figure(figsize=(8, 6))
+plt.scatter(customer_df['TotalAmountSpent'], customer_df['FrequencyOfVisits'], c=customer_df['Cluster'], cmap='viridis', marker='o')
+plt.xlabel('Total Amount Spent')
+plt.ylabel('Frequency of Visits')
+plt.title('Customer Segmentation using K-Means')
+plt.colorbar(label='Cluster')
+plt.grid(True)
+plt.show()
+
+# Example of predicting a new customer's segment
+new_customer_data = {'TotalAmountSpent': [250], 'FrequencyOfVisits': [4]}
+new_customer_df = pd.DataFrame(new_customer_data)
+predicted_segment = kmeans_model.predict(new_customer_df)
+print(f"\nPredicted segment for a new customer with TotalAmountSpent=250 and FrequencyOfVisits=4: {predicted_segment[0]}")
