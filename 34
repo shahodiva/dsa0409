@@ -1,0 +1,65 @@
+# prompt:  Scenario: Suppose you are working as a data scientist for a medical research organization. 
+# Your team has collected data on patients with a certain medical condition and their treatment 
+# outcomes. The dataset includes various features such as age, gender, blood pressure, cholesterol 
+# levels, and whether the patient responded positively ("Good") or negatively ("Bad") to the 
+# treatment. The organization wants to use this model to identify potential candidates who are likely 
+# to respond positively to the treatment and improve their medical approach. 
+# Question: Your task is to build a classification model using the KNN algorithm to predict the 
+# treatment outcome ("Good" or "Bad") for new patients based on their features. Evaluate the model's 
+# performance using accuracy, precision, recall, and F1-score.Make predictions on the test set and 
+# display the results.
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+import numpy as np
+
+# Create a sample dataset (replace with your actual data)
+# Features: age, gender (0 for male, 1 for female), blood_pressure, cholesterol, treatment_outcome (0 for Bad, 1 for Good)
+data = np.array([
+    [45, 0, 120, 180, 1],
+    [60, 1, 140, 220, 0],
+    [55, 0, 130, 200, 1],
+    [70, 1, 150, 240, 0],
+    [50, 0, 125, 190, 1],
+    [65, 1, 145, 230, 0],
+    [48, 0, 122, 185, 1],
+    [75, 1, 160, 250, 0],
+    [53, 0, 128, 195, 1],
+    [68, 1, 155, 245, 0]
+])
+
+X = data[:, :-1]  # Features (all columns except the last one)
+y = data[:, -1]   # Labels (the last column)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Create the KNN classifier
+# You can experiment with different values for n_neighbors
+knn = KNeighborsClassifier(n_neighbors=3)
+
+# Train the model
+knn.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = knn.predict(X_test)
+
+# Evaluate the model's performance
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred)
+
+print("Model Performance:")
+print(f"Accuracy: {accuracy:.2f}")
+print(f"Precision: {precision:.2f}")
+print(f"Recall: {recall:.2f}")
+print(f"F1-score: {f1:.2f}")
+
+# Display the predictions on the test set
+print("\nPredictions on the test set:")
+for i in range(len(X_test)):
+    predicted_outcome = "Good" if y_pred[i] == 1 else "Bad"
+    actual_outcome = "Good" if y_test[i] == 1 else "Bad"
+    print(f"Patient Features: {X_test[i]}, Predicted Outcome: {predicted_outcome}, Actual Outcome: {actual_outcome}")
