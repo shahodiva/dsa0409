@@ -1,0 +1,62 @@
+# prompt: Scenario: You are a data analyst working for a finance company. Your team is interested in 
+# analyzing the variability of stock prices for a particular company over a certain period. The 
+# company's stock data includes the closing prices for each trading day of the specified period. 
+# Question: Your task is to build a Python program that reads the stock data from a CSV file, 
+# calculates the variability of stock prices, and provides insights into the stock's price movements. 
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+# Create a dummy CSV file for demonstration
+csv_data = """Date,Close
+2023-01-01,150.00
+2023-01-02,152.50
+2023-01-03,151.80
+2023-01-04,153.20
+2023-01-05,150.90
+2023-01-06,155.00
+2023-01-07,154.30
+2023-01-08,156.10
+2023-01-09,155.50
+2023-01-10,157.00
+"""
+with open('stock_data.csv', 'w') as f:
+  f.write(csv_data)
+
+# Read the stock data from the CSV file
+try:
+  stock_df = pd.read_csv('stock_data.csv')
+except FileNotFoundError:
+  print("Error: 'stock_data.csv' not found. Please ensure the file is in the correct directory.")
+  exit()
+
+# Convert 'Close' column to numeric, handling potential errors
+stock_df['Close'] = pd.to_numeric(stock_df['Close'], errors='coerce')
+
+# Drop rows with missing 'Close' values after conversion
+stock_df.dropna(subset=['Close'], inplace=True)
+
+# Calculate the standard deviation of closing prices as a measure of variability
+variability = np.std(stock_df['Close'])
+
+# Print the variability
+print(f"The variability of the stock prices (Standard Deviation) is: {variability:.2f}")
+
+# Provide insights based on the variability
+if variability > 2.0: # This threshold can be adjusted based on your analysis needs
+  print("Insight: The stock price shows significant variability during this period, suggesting higher risk or opportunity for trading.")
+elif variability > 0.5:
+  print("Insight: The stock price shows moderate variability.")
+else:
+  print("Insight: The stock price shows low variability during this period, suggesting relative stability.")
+
+# You could further visualize the closing prices to see the trend
+# plt.figure(figsize=(10, 6))
+# plt.plot(stock_df['Date'], stock_df['Close'])
+# plt.xlabel('Date')
+# plt.ylabel('Closing Price')
+# plt.title('Stock Price Over Time')
+# plt.xticks(rotation=45)
+# plt.tight_layout()
+# plt.show()
