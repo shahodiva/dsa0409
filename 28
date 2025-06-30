@@ -1,0 +1,40 @@
+# prompt: You are working for an e-commerce company and want to segment your customers into distinct 
+# groups based on their purchasing behavior. You have collected a dataset of customer data with 
+# various shopping-related features. 
+# Write a Python program that allows the user to input the shopping-related features of a new 
+# customer. The program should use K-Means clustering from scikit-learn to assign the new customer 
+# to one of the existing segments based on the input features. 
+
+import numpy as np
+!pip install scikit-learn
+
+from sklearn.cluster import KMeans
+
+# Create a sample dataset of customer shopping features (replace with your actual data)
+# Example features: ['Annual Income (k$)', 'Spending Score (1-100)']
+customer_features = np.array([
+    [15, 39], [15, 81], [16, 6], [16, 77], [17, 40],
+    [17, 76], [18, 6], [18, 94], [19, 3], [19, 72],
+    [20, 35], [20, 73], [21, 5], [21, 60], [22, 35],
+    [22, 79], [23, 5], [23, 83], [24, 8], [24, 97]
+])
+
+# Determine the optimal number of clusters (e.g., using the Elbow method or silhouette score)
+# For this example, we'll assume we know there are 5 segments.
+n_clusters = 5
+
+# Train the K-Means model
+kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10) # Set n_init explicitly
+kmeans.fit(customer_features)
+
+# Get input features for the new customer from the user
+annual_income = float(input("Enter the annual income (in k$): "))
+spending_score = float(input("Enter the spending score (1-100): "))
+
+# Create a numpy array for the new customer's features
+new_customer_features_km = np.array([[annual_income, spending_score]])
+
+# Predict the segment for the new customer
+predicted_segment = kmeans.predict(new_customer_features_km)
+
+print(f"Based on the input features, the new customer is predicted to belong to segment: {predicted_segment[0]}")
