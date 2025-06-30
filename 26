@@ -1,0 +1,37 @@
+# prompt: You are a real estate analyst trying to predict housing prices based on various features of the 
+# houses, such as area, number of bedrooms, and location. You have collected a dataset of houses 
+# with their respective prices. 
+
+import numpy as np
+# Create a sample dataset (replace with your actual housing data)
+# Features: Area (sq ft), Bedrooms, Location (dummy variable, e.g., 0 for Suburb A, 1 for Suburb B)
+# Price (in thousands of dollars)
+housing_features = np.array([[1500, 3, 0],
+                           [2000, 4, 1],
+                           [1200, 2, 0],
+                           [1800, 3, 1],
+                           [2500, 4, 1],
+                           [1000, 2, 0]])
+housing_prices = np.array([300, 450, 250, 400, 550, 200])
+
+# For this simple example, we'll use Linear Regression.
+# In a real-world scenario, you would likely use more advanced models
+# and perform more extensive data preprocessing and feature engineering.
+from sklearn.linear_model import LinearRegression
+
+# Create and train the Linear Regression model
+housing_model = LinearRegression()
+housing_model.fit(housing_features, housing_prices)
+
+# Get input features for a new house from the user
+area = float(input("Enter the area of the house (in sq ft): "))
+bedrooms = int(input("Enter the number of bedrooms: "))
+location = int(input("Enter the location (0 for Suburb A, 1 for Suburb B): "))
+
+# Create a numpy array for the new house's features
+new_house_features = np.array([[area, bedrooms, location]])
+
+# Predict the price of the new house
+predicted_price = housing_model.predict(new_house_features)
+
+print(f"The predicted price for this house is: ${predicted_price[0]:.2f} thousand")
